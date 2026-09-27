@@ -1,0 +1,1 @@
+var e=`/assets/hero-slide-3-B01F281z.jpg`;export{e as t};
