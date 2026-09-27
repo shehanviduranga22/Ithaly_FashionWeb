@@ -1,0 +1,1 @@
+var e=`/assets/detail-lapel-DhFSc8gu.jpg`;export{e as t};
