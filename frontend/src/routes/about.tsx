@@ -50,6 +50,12 @@ function About() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const context = gsap.context(() => {
+      gsap.fromTo(
+        "[data-page-load-rise]",
+        { autoAlpha: 0, y: 46 },
+        { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out", stagger: 0.08, delay: 0.12 },
+      );
+
       gsap.utils.toArray<HTMLElement>("[data-about-label]").forEach((element) => {
         gsap.fromTo(
           element,
@@ -169,25 +175,25 @@ function About() {
         </section>
 
         <section className="about-maison-intro" aria-label="Maison introduction">
-          <p className="about-micro-label" data-about-label>
+          <p className="about-micro-label" data-about-label data-page-load-rise>
             CIAO D MILANO / THE MAISON
           </p>
-          <h2 className="about-maison-title" data-about-headline>
+          <h2 className="about-maison-title" data-about-headline data-page-load-rise>
             <span>Italian tailoring,</span>
             <span className="about-maison-title-italic">a different horizon.</span>
           </h2>
-          <p className="about-maison-copy" data-about-headline>
+          <p className="about-maison-copy" data-about-headline data-page-load-rise>
             Founded in Dubai and drawn from the discipline of Milanese tailoring, the label makes
             fewer, better pieces for a climate and a life that Italy never designed for.
           </p>
-          <div className="about-maison-meta" data-about-label>
+          <div className="about-maison-meta" data-about-label data-page-load-rise>
             <span>MILANO</span>
             <span className="about-maison-line" aria-hidden="true" />
             <span>DUBAI</span>
           </div>
         </section>
 
-        <section ref={storyRef} className="about-story-section" aria-label="The story">
+        <section ref={storyRef} className="about-story-section" aria-label="The story" data-page-load-rise>
           <div className="about-story-header" data-about-label>
             <span>02 / THE STORY</span>
             <span>A QUIETER APPROACH</span>

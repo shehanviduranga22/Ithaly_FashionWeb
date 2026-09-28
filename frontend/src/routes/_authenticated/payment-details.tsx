@@ -7,7 +7,10 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { formatPrice } from "@/data/products";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
+import { getAuthToken, getStoredUser } from "@/lib/auth";
 import { startPayment } from "@/lib/payments.functions";
+
+const authApiUrl = import.meta.env.VITE_AUTH_API_URL ?? "http://localhost:4000";
 
 type PaymentDraft = {
   subtotal: number;
@@ -77,6 +80,7 @@ function PaymentDetailsPage() {
   const [cvc, setCvc] = useState("");
   const [cardFlipped, setCardFlipped] = useState(false);
   const [placing, setPlacing] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   if (!draft) {
     return (
@@ -107,54 +111,59 @@ function PaymentDetailsPage() {
     setPlacing(true);
 
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData.user;
-      if (!user) throw new Error("Please sign in again.");
+      if (!cardNumber || !cardName || !expiry || !cvc) {
+        throw new Error("Please complete all payment details before continuing.");
+      }
 
-      const { data: order, error } = await supabase
-        .from("orders")
-        .insert({
-          user_id: user.id,
-          total_aed: draft.subtotal,
+      const storedUser = getStoredUser();
+      const token = getAuthToken();
+      if (!storedUser || !token) {
+        throw new Error("Please sign in before completing your payment.");
+      }
+
+      const response = await fetch(`${authApiUrl}/api/order-details`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: storedUser.email,
+          address: {
+            full_name: draft.form.contact_name,
+            phone: draft.form.contact_phone,
+            address_line1: draft.form.address_line1,
+            address_line2: draft.form.address_line2,
+            city: draft.form.city,
+            emirate: draft.form.emirate,
+          },
+          notes: draft.form.notes,
           payment_method: "card",
-          ...draft.form,
-        })
-        .select("id")
-        .single();
-      if (error || !order) throw error ?? new Error("Order could not be created.");
-
-      const { error: itemsError } = await supabase.from("order_items").insert(
-        draft.items.map((item) => ({
-          order_id: order.id,
-          product_slug: item.slug,
-          product_name: item.name,
-          size: item.size,
-          color: item.color,
-          unit_price_aed: item.price,
-          quantity: item.quantity,
-        })),
-      );
-      if (itemsError) throw itemsError;
-
-      await supabase.from("profiles").upsert({
-        id: user.id,
-        full_name: draft.form.contact_name,
-        phone: draft.form.contact_phone,
-        address_line1: draft.form.address_line1,
-        address_line2: draft.form.address_line2,
-        city: draft.form.city,
-        emirate: draft.form.emirate,
-        updated_at: new Date().toISOString(),
+          items: draft.items.map((item) => ({
+            slug: item.slug,
+            name: item.name,
+            image: item.image,
+            size: item.size,
+            color: item.color,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          total_amount: draft.subtotal,
+        }),
       });
 
-      const { url } = await beginPayment({
-        data: { orderId: order.id, method: "card", returnTo: window.location.href },
-      });
+      const result = (await response.json().catch(() => ({}))) as { message?: string };
+      if (!response.ok) {
+        throw new Error(result.message ?? "Your order could not be saved.");
+      }
+
       sessionStorage.removeItem("cdm-payment-draft");
       clear();
-      window.location.href = url;
+      setPaymentSuccess(true);
+      toast.success("Your payment successful.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Payment could not be started.");
+    } finally {
       setPlacing(false);
     }
   }
@@ -168,10 +177,53 @@ function PaymentDetailsPage() {
           <h1 className="mt-4 font-serif text-3xl font-medium sm:text-4xl">Enter payment details</h1>
 
           <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-20">
-            <form onSubmit={handlePayment} className="order-2 space-y-5 lg:order-1">
-              <label className="block">
-                <span className="text-[11px] uppercase tracking-[0.2em] text-ink/55">Card number</span>
-                <input
+            {paymentSuccess ? (
+              <div className="order-2 space-y-6 rounded-2xl border border-green-200 bg-green-50 p-8 text-left shadow-sm lg:order-1">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-green-700/80">Payment status</p>
+                  <h2 className="mt-4 font-serif text-3xl text-green-900">Your payment successful</h2>
+                </div>
+
+                <div className="space-y-3 text-sm text-green-900/80">
+                  <p><span className="font-medium text-green-900">Email:</span> {getStoredUser()?.email ?? "—"}</p>
+                  <p><span className="font-medium text-green-900">Full name:</span> {draft.form.contact_name}</p>
+                  <p><span className="font-medium text-green-900">Phone:</span> {draft.form.contact_phone}</p>
+                  <p><span className="font-medium text-green-900">Address:</span> {draft.form.address_line1}{draft.form.address_line2 ? `, ${draft.form.address_line2}` : ""}</p>
+                  <p><span className="font-medium text-green-900">City:</span> {draft.form.city}</p>
+                  <p><span className="font-medium text-green-900">Emirate:</span> {draft.form.emirate}</p>
+                  <p><span className="font-medium text-green-900">Notes:</span> {draft.form.notes || "—"}</p>
+                  <p><span className="font-medium text-green-900">Payment method:</span> Card</p>
+                </div>
+
+                <div className="rounded-xl border border-green-200 bg-white/70 p-4">
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-green-800/70">Order items</p>
+                  <ul className="mt-3 space-y-2 text-sm text-green-900/80">
+                    {draft.items.map((item) => (
+                      <li key={item.key} className="flex items-start justify-between gap-3 border-b border-green-100 pb-2 last:border-b-0 last:pb-0">
+                        <span>
+                          {item.quantity} × {item.name}
+                          <span className="mt-1 block text-[11px] uppercase tracking-[0.15em] text-green-800/60">
+                            {item.size ? `Size ${item.size}` : "Size —"} · {item.color || "No color"}
+                          </span>
+                        </span>
+                        <span className="tabular-nums">{formatPrice(item.price * item.quantity)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="border-t border-green-200 pt-3">
+                  <p className="flex items-center justify-between text-sm text-green-900/80">
+                    <span className="font-medium">Total amount</span>
+                    <span className="font-serif text-2xl text-green-900">{formatPrice(draft.subtotal)}</span>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handlePayment} className="order-2 space-y-5 lg:order-1">
+                <label className="block">
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-ink/55">Card number</span>
+                  <input
                   required
                   inputMode="numeric"
                   autoComplete="cc-number"
@@ -227,10 +279,11 @@ function PaymentDetailsPage() {
               >
                 {placing ? "Opening secure payment..." : `Continue to payment - ${formatPrice(draft.subtotal)}`}
               </button>
-              <p className="text-[11px] leading-relaxed text-ink/45">
-                Your card details are previewed here and entered again only on the secure payment page.
-              </p>
-            </form>
+                <p className="text-[11px] leading-relaxed text-ink/45">
+                  Your card details are previewed here and entered again only on the secure payment page.
+                </p>
+              </form>
+            )}
 
             <div className="order-1 lg:order-2">
               <div className="relative aspect-[1.58/1] w-full max-w-[520px] [perspective:1200px]">

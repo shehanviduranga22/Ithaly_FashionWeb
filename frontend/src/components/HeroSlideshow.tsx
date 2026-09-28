@@ -30,7 +30,7 @@ export function HeroSlideshow({
   if (slides.length === 0) return null;
 
   return (
-    <>
+    <div className="absolute inset-0 overflow-hidden" data-cinematic-slideshow>
       {slides.map((slide, i) => (
         <img
           key={slide.src}
@@ -49,6 +49,7 @@ export function HeroSlideshow({
       {(eyebrow || title || subtitle) && (
         <div
           className="absolute inset-0 z-10 flex items-center justify-center px-6 text-center text-cream"
+          data-slideshow-copy
           style={{ textShadow: "0 10px 40px rgba(0,0,0,0.8)" }}
         >
           <div className="max-w-[48rem]">
@@ -68,19 +69,20 @@ export function HeroSlideshow({
           </div>
         </div>
       )}
-      <div className="absolute bottom-4 right-6 lg:right-10 z-20 flex items-center gap-2">
+      <div className="absolute bottom-4 right-6 z-20 flex items-center gap-2 lg:right-10">
         {slides.map((_, i) => (
           <button
             key={i}
             type="button"
             aria-label={`Go to slide ${i + 1}`}
             onClick={() => setActive(i)}
+            data-slideshow-indicator
             className={`h-1 rounded-full transition-all duration-500 ${
               i === active ? "w-8 bg-cream" : "w-3 bg-cream/40 hover:bg-cream/70"
             }`}
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }

@@ -5,6 +5,129 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer base {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  a,
+  button,
+  img {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (hover: hover) {
+  .nav-link,
+  .site-footer-link,
+  .site-footer-social,
+  .product-card-name,
+  .product-card-price,
+  .product-card-cta,
+  .site-brand {
+    transition: transform 0.35s ease, opacity 0.35s ease, color 0.35s ease, border-color 0.35s ease, background-color 0.35s ease;
+  }
+}
+
+.nav-link,
+.site-footer-link {
+  position: relative;
+}
+
+.nav-link::after,
+.site-footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.45rem;
+  width: 100%;
+  height: 1px;
+  background: rgba(244, 239, 231, 0.9);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after,
+.site-footer-link:hover::after {
+  transform: scaleX(1);
+}
+
+.site-header {
+  transition: height 0.4s ease, background-color 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.site-header.is-scrolled {
+  background: rgba(22, 18, 15, 0.92);
+  backdrop-filter: blur(10px);
+}
+
+.site-header.is-scrolled .site-brand {
+  transform: scale(0.94);
+}
+
+.product-card-media {
+  overflow: hidden;
+}
+
+.product-card-image {
+  transform-origin: center;
+  will-change: transform;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease;
+}
+
+.group:hover .product-card-image,
+.group:focus-within .product-card-image {
+  transform: scale(1.035);
+}
+
+.product-card-name,
+.product-card-price {
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.group:hover .product-card-name,
+.group:focus-within .product-card-name {
+  transform: translateY(-2px);
+}
+
+.group:hover .product-card-price,
+.group:focus-within .product-card-price {
+  opacity: 1;
+}
+
+.product-card-cta {
+  transform: translateY(0.5rem);
+}
+
+.group:hover .product-card-cta,
+.group:focus-within .product-card-cta {
+  transform: translateY(0);
+}
+
+.site-footer-social {
+  transition: transform 0.35s ease, background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.site-footer-social:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /*
  * CIAO D MILANO — "Archival Catalogue" design system.
  * Paper / ink / fawn / cream palette, Cormorant Garamond + Jost.

@@ -57,7 +57,7 @@ function CartPage() {
                       height={200}
                       className="h-28 w-24 shrink-0 object-cover"
                     />
-                    <div className="flex-1">
+                    <div className="flex flex-1 flex-col">
                       <div className="flex flex-wrap items-baseline justify-between gap-3">
                         <h2 className="font-serif text-xl font-medium">{item.name}</h2>
                         <span className="text-sm tabular-nums">
@@ -67,35 +67,43 @@ function CartPage() {
                       <p className="mt-1 text-[11px] uppercase tracking-[0.15em] text-ink/50">
                         Size {item.size} · {item.color}
                       </p>
-                      <div className="mt-4 flex items-center gap-4">
-                        <div className="flex items-center border border-ink/20">
+
+                      <div className="mt-auto flex items-end justify-between gap-4 pt-5">
+                        <div className="flex items-center border border-ink/20 bg-paper">
                           <button
                             type="button"
                             aria-label="Decrease quantity"
                             onClick={() => setQuantity(item.key, item.quantity - 1)}
-                            className="size-9 text-sm"
+                            className="size-9 text-sm transition-colors hover:bg-ink hover:text-cream"
                           >
                             −
                           </button>
-                          <span className="w-8 text-center text-sm tabular-nums">
-                            {item.quantity}
-                          </span>
+                          <span className="w-8 text-center text-sm tabular-nums">{item.quantity}</span>
                           <button
                             type="button"
                             aria-label="Increase quantity"
                             onClick={() => setQuantity(item.key, item.quantity + 1)}
-                            className="size-9 text-sm"
+                            className="size-9 text-sm transition-colors hover:bg-ink hover:text-cream"
                           >
                             +
                           </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => remove(item.key)}
-                          className="text-[11px] uppercase tracking-[0.2em] text-ink/45 hover:text-ink"
-                        >
-                          Remove
-                        </button>
+
+                        <div className="ml-auto flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => remove(item.key)}
+                            className="bg-ink px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.18em] text-cream transition-opacity hover:opacity-90"
+                          >
+                            Remove
+                          </button>
+                          <Link
+                            to="/checkout"
+                            className="bg-ink px-4 py-2.5 text-[10px] font-medium uppercase tracking-[0.18em] text-cream transition-opacity hover:opacity-90"
+                          >
+                            Buy now
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </li>

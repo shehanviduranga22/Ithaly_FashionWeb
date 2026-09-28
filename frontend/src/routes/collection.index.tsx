@@ -1,10 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { HeroSlideshow, type Slide } from "@/components/HeroSlideshow";
 import { categories, products, type Category } from "@/data/products";
+
+gsap.registerPlugin(ScrollTrigger);
 import collectionSlide1 from "@/assets/collection_slideshow (1).png";
 import collectionSlide2 from "@/assets/collection_slideshow (2).png";
 import collectionSlide3 from "@/assets/collection_slideshow (3).png";
@@ -38,14 +42,55 @@ export const Route = createFileRoute("/collection/")({
 function Collection() {
   const [active, setActive] = useState<Category | "All">("All");
   const visible = active === "All" ? products : products.filter((p) => p.category === active);
+  const collectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        "[data-page-load-rise]",
+        { autoAlpha: 0, y: 46 },
+        { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out", stagger: 0.08, delay: 0.15 },
+      );
+
+      gsap.fromTo(
+        ".collection-landing-panel",
+        { autoAlpha: 0, y: 46 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: collectionRef.current, start: "top 72%", once: true },
+        },
+      );
+
+      gsap.utils.toArray<HTMLElement>(".collection-product-card").forEach((element) => {
+        gsap.fromTo(
+          element,
+          { autoAlpha: 0, y: 42 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: { trigger: element, start: "top 84%", once: true },
+          },
+        );
+      });
+    }, collectionRef);
+
+    return () => context.revert();
+  }, []);
 
   return (
     <div className="text-ink">
       <SiteHeader />
 
-      <main className="bg-paper">
+      <main className="bg-paper" ref={collectionRef}>
         <section
-          className="relative h-[42vh] min-h-[320px] max-h-[560px] overflow-hidden border-b border-ink/10"
+          className="collection-landing-panel relative h-[42vh] min-h-[320px] max-h-[560px] overflow-hidden border-b border-ink/10"
           aria-label="Collection highlights"
         >
           <HeroSlideshow
@@ -57,8 +102,11 @@ function Collection() {
           <div className="absolute inset-0 bg-gradient-to-t from-ink/35 via-transparent to-transparent" />
         </section>
 
-        <div className="mx-auto max-w-[1240px] px-6 lg:px-10 py-16 lg:py-24">
-          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-ink/15 pb-6">
+        <div className="mx-auto max-w-[1240px] px-6 py-16 lg:px-10 lg:py-24">
+          <div
+            className="collection-landing-panel flex flex-wrap items-end justify-between gap-6 border-b border-ink/15 pb-6"
+            data-page-load-rise
+          >
             <div className="flex flex-wrap gap-6 text-[11px] uppercase tracking-[0.2em]">
               {(["All", ...categories] as const).map((cat) => (
                 <button
@@ -77,15 +125,17 @@ function Collection() {
             </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10" data-reveal-stagger>
+          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10" data-reveal-stagger>
             {visible.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+              <div key={product.slug} className="collection-product-card" data-page-load-rise>
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
 
-          <p className="mt-14 text-[12px] uppercase tracking-[0.2em] text-ink/50">
+          <p className="mt-14 text-[12px] uppercase tracking-[0.2em] text-ink/50" data-page-load-rise>
             Every plate can be ordered or reserved on WhatsApp ·{" "}
-            <Link to="/contact" className="text-ink/70 hover:text-ink transition-colors">
+            <Link to="/contact" className="text-ink/70 transition-colors hover:text-ink">
               Contact the maison
             </Link>
           </p>

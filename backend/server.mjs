@@ -151,7 +151,7 @@ app.post("/api/order-details", async (request, response) => {
   const tokenUser = authenticatedUser(request, response);
   if (!tokenUser || typeof tokenUser !== "object" || typeof tokenUser.email !== "string") return;
 
-  const { address, payment_method, items, total_amount } = request.body ?? {};
+  const { address, payment_method, items, total_amount, notes } = request.body ?? {};
   const requiredAddress = [
     address?.full_name,
     address?.phone,
@@ -182,6 +182,7 @@ app.post("/api/order-details", async (request, response) => {
       city: address.city.trim(),
       emirate: address.emirate.trim(),
     },
+    notes: typeof notes === "string" ? notes.trim() : "",
     payment_method,
     items: items.map((item) => ({
       slug: typeof item.slug === "string" ? item.slug : "",

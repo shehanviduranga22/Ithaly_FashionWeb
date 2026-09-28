@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import detailLapel from "@/assets/detail-lapel.jpg";
 import { HeroSlideshow, type Slide } from "@/components/HeroSlideshow";
+
+gsap.registerPlugin(ScrollTrigger);
 import deliverySlide1 from "@/assets/delivery_slideshow (1).png";
 import deliverySlide2 from "@/assets/delivery_slideshow (2).png";
 import deliverySlide3 from "@/assets/delivery_slideshow (3).png";
@@ -100,6 +104,34 @@ export const Route = createFileRoute("/delivery")({
 function Delivery() {
   const [openDetail, setOpenDetail] = useState<number | null>(0);
 
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        "[data-page-load-rise]",
+        { autoAlpha: 0, y: 46 },
+        { autoAlpha: 1, y: 0, duration: 1.1, ease: "power3.out", stagger: 0.08, delay: 0.12 },
+      );
+
+      gsap.utils.toArray<HTMLElement>("[data-delivery-reveal]").forEach((element) => {
+        gsap.fromTo(
+          element,
+          { autoAlpha: 0, y: 44 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: element, start: "top 82%", once: true },
+          },
+        );
+      });
+    });
+
+    return () => context.revert();
+  }, []);
+
   return (
     <div className="text-ink">
       <SiteHeader />
@@ -120,7 +152,7 @@ function Delivery() {
         </section>
 
         <div className="delivery-page-shell">
-          <section className="delivery-intro" data-delivery-reveal>
+          <section className="delivery-intro" data-delivery-reveal data-page-load-rise>
             <div className="delivery-intro-copy">
               <p className="delivery-label">DELIVERY / PRIVATE SERVICE</p>
               <h2 className="delivery-intro-heading">

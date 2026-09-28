@@ -11,11 +11,11 @@ const socials = [
 
 export function SiteFooter() {
   return (
-    <footer className="bg-ink text-cream border-t border-cream/15">
-      <div className="mx-auto max-w-[1240px] px-6 lg:px-10 py-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <footer className="site-footer border-t border-cream/15 bg-ink text-cream">
+      <div className="mx-auto flex max-w-[1240px] flex-col justify-between gap-8 px-6 py-12 md:flex-row md:items-end lg:px-10">
         <div>
-          <p className="font-serif text-2xl tracking-[0.14em] font-semibold">{site.name}</p>
-          <p className="mt-2 text-[11px] uppercase tracking-[0.22em] text-cream/55 font-medium">{site.tagline}</p>
+          <p className="font-serif text-2xl font-semibold tracking-[0.14em]">{site.name}</p>
+          <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.22em] text-cream/55">{site.tagline}</p>
           <div className="mt-5 flex items-center gap-3">
             {socials.map(({ href, label, Icon }) => (
               <a
@@ -24,27 +24,27 @@ export function SiteFooter() {
                 target={href.startsWith("mailto:") ? undefined : "_blank"}
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-cream text-ink ring-1 ring-cream transition-all hover:bg-white hover:ring-white"
+                className="site-footer-social inline-flex h-9 w-9 items-center justify-center rounded-full bg-cream text-ink ring-1 ring-cream transition-all hover:bg-white hover:ring-white"
               >
                 <Icon className="h-4 w-4" strokeWidth={1.75} />
               </a>
             ))}
           </div>
         </div>
-        <div className="flex flex-wrap gap-x-8 gap-y-2 text-[11px] uppercase tracking-[0.2em] text-cream/70 font-medium">
-          <Link to="/delivery" className="transition-colors hover:text-ink">
+        <div className="flex flex-wrap gap-x-8 gap-y-2 text-[11px] font-medium uppercase tracking-[0.2em] text-cream/70">
+          <Link to="/delivery" className="site-footer-link transition-colors hover:text-ink">
             Delivery
           </Link>
-          <Link to="/about" className="transition-colors hover:text-ink">
+          <Link to="/about" className="site-footer-link transition-colors hover:text-ink">
             Maison
           </Link>
-          <Link to="/contact" className="transition-colors hover:text-ink">
+          <Link to="/contact" className="site-footer-link transition-colors hover:text-ink">
             Contact
           </Link>
         </div>
       </div>
       <div className="border-t border-cream/15">
-        <div className="mx-auto max-w-[1240px] px-6 lg:px-10 py-5 text-[10px] uppercase tracking-[0.2em] text-cream/40 flex flex-wrap justify-between gap-2">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-2 px-6 py-5 text-[10px] uppercase tracking-[0.2em] text-cream/40 lg:px-10">
           <span>© {new Date().getFullYear()} {site.name} — All plates reserved</span>
           <span>Collection 01 · Dubai</span>
         </div>
