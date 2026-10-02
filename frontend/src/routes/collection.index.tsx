@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Search } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 import { HeroSlideshow, type Slide } from "@/components/HeroSlideshow";
+import { Input } from "@/components/ui/input";
 import { categories, products, type Category } from "@/data/products";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -41,7 +43,16 @@ export const Route = createFileRoute("/collection/")({
 
 function Collection() {
   const [active, setActive] = useState<Category | "All">("All");
-  const visible = active === "All" ? products : products.filter((p) => p.category === active);
+  const [query, setQuery] = useState("");
+
+  const visible = products.filter((product) => {
+    const matchesCategory = active === "All" || product.category === active;
+    const searchableText = `${product.name} ${product.category} ${product.plate} ${product.summary}`.toLowerCase();
+    const matchesQuery = searchableText.includes(query.trim().toLowerCase());
+
+    return matchesCategory && matchesQuery;
+  });
+
   const collectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -104,7 +115,7 @@ function Collection() {
 
         <div className="mx-auto max-w-[1240px] px-6 py-16 lg:px-10 lg:py-24">
           <div
-            className="collection-landing-panel flex flex-wrap items-end justify-between gap-6 border-b border-ink/15 pb-6"
+            className="collection-landing-panel flex flex-col gap-6 border-b border-ink/15 pb-6 lg:flex-row lg:items-end lg:justify-between"
             data-page-load-rise
           >
             <div className="flex flex-wrap gap-6 text-[11px] uppercase tracking-[0.2em]">
@@ -123,14 +134,35 @@ function Collection() {
                 </button>
               ))}
             </div>
+
+            <label className="relative block w-full max-w-sm">
+              <span className="sr-only">Search collection items</span>
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50" />
+              <Input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search collection"
+                className="h-11 border border-ink/15 bg-white pl-9 text-sm text-ink placeholder:text-ink/45 focus-visible:ring-ink/20"
+              />
+            </label>
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10" data-reveal-stagger>
-            {visible.map((product) => (
-              <div key={product.slug} className="collection-product-card" data-page-load-rise>
-                <ProductCard product={product} />
+            {visible.length > 0 ? (
+              visible.map((product) => (
+                <div key={product.slug} className="collection-product-card" data-page-load-rise>
+                  <ProductCard product={product} />
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full rounded-[1.5rem] border border-dashed border-ink/15 bg-white/50 p-10 text-center">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-ink/50">No items found</p>
+                <p className="mt-3 text-sm text-ink/70">
+                  Try another keyword or switch back to the full collection.
+                </p>
               </div>
-            ))}
+            )}
           </div>
 
           <p className="mt-14 text-[12px] uppercase tracking-[0.2em] text-ink/50" data-page-load-rise>

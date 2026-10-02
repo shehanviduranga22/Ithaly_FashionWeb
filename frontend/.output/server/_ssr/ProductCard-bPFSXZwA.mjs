@@ -1,7 +1,7 @@
 import { n as require_jsx_runtime } from "../_libs/react+tanstack__react-query.mjs";
 import { c as useCart } from "./auth-DeL9dCwQ.mjs";
 import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-import { r as Plus } from "../_libs/lucide-react.mjs";
+import { i as Plus } from "../_libs/lucide-react.mjs";
 import { r as formatPrice } from "./products-BLU4_Spt.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/ProductCard-bPFSXZwA.js

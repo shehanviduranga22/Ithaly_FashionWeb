@@ -1,7 +1,7 @@
 import { n as __toESM } from "../_runtime.mjs";
 import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
 import { l as whatsappLink, r as generalWhatsappLink, s as site } from "./auth-DeL9dCwQ.mjs";
-import { a as Mail, i as MessageCircle, o as Instagram, s as Facebook } from "../_libs/lucide-react.mjs";
+import { a as MessageCircle, c as Facebook, o as Mail, s as Instagram } from "../_libs/lucide-react.mjs";
 import { n as SiteHeader, t as SiteFooter } from "./SiteFooter-BaozHYWn.mjs";
 import { t as WhatsAppButton } from "./WhatsAppButton-BrkOH2D5.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/contact-DL5-xafH.js

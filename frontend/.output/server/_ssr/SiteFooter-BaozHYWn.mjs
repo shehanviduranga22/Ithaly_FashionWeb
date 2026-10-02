@@ -2,7 +2,7 @@ import { n as __toESM } from "../_runtime.mjs";
 import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
 import { a as getStoredUser, c as useCart, n as clearAuthSession, r as generalWhatsappLink, s as site } from "./auth-DeL9dCwQ.mjs";
 import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-import { a as Mail, i as MessageCircle, n as ShoppingBag, o as Instagram, s as Facebook, t as User } from "../_libs/lucide-react.mjs";
+import { a as MessageCircle, c as Facebook, n as ShoppingBag, o as Mail, s as Instagram, t as User } from "../_libs/lucide-react.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/SiteFooter-BaozHYWn.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();

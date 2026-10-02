@@ -193,6 +193,21 @@ var Plus = createLucideIcon("plus", [["path", {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var Search = createLucideIcon("search", [["path", {
+	d: "m21 21-4.34-4.34",
+	key: "14j7rj"
+}], ["circle", {
+	cx: "11",
+	cy: "11",
+	r: "8",
+	key: "4ej97u"
+}]]);
+/**
+* @license lucide-react v0.575.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var ShoppingBag = createLucideIcon("shopping-bag", [
 	["path", {
 		d: "M16 10a4 4 0 0 1-8 0",
@@ -223,4 +238,4 @@ var User = createLucideIcon("user", [["path", {
 	key: "17ys0d"
 }]]);
 //#endregion
-export { Mail as a, MessageCircle as i, ShoppingBag as n, Instagram as o, Plus as r, Facebook as s, User as t };
+export { MessageCircle as a, Facebook as c, Plus as i, ShoppingBag as n, Mail as o, Search as r, Instagram as s, User as t };
